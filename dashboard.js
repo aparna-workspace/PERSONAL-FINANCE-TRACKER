@@ -1,5 +1,6 @@
-console.log("dashboard.js is loaded");
 document.addEventListener("DOMContentLoaded", async () => {
+  console.log("dashboard.js is loaded");
+  
   const userEmail = document.getElementById("userEmail");
   const logoutBtn = document.getElementById("logoutBtn");
 
