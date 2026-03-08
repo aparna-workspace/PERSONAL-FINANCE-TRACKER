@@ -17,4 +17,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
   });
+const addBtn = document.getElementById("addBtn");
+
+addBtn.addEventListener("click", async () => {
+
+  console.log("Add button clicked");
+
+  const amount = document.getElementById("amount").value;
+  const category = document.getElementById("category").value;
+  const expense_date = document.getElementById("expense_date").value;
+  const note = document.getElementById("note").value;
+
+  const { data, error } = await supabaseClient
+    .from("expenses")
+    .insert([
+      {
+        amount: Number(amount),
+        category: category,
+        expense_date: expense_date,
+        note: note
+      }
+    ]);
+
+  console.log("Insert result:", data);
+  console.log("Insert error:", error);
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Expense added successfully");
+  }
+
+});  
 });
