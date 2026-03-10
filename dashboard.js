@@ -1,13 +1,37 @@
+console.log("dashboard.js loaded");
+
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("dashboard.js is loaded");
-  
   const userEmail = document.getElementById("userEmail");
   const logoutBtn = document.getElementById("logoutBtn");
+  const addBtn = document.getElementById("addBtn");
+  const msg = document.getElementById("msg");
+  const monthTotalEl = document.getElementById("monthTotal");
+  const tbody = document.getElementById("expenseTableBody");
 
-  const { data: { user } } = await supabaseClient.auth.getUser();
+  const amountEl = document.getElementById("amount");
+  const categoryEl = document.getElementById("category");
+  const dateEl = document.getElementById("expense_date");
+  const noteEl = document.getElementById("note");
+
+  console.log({
+    userEmail,
+    logoutBtn,
+    addBtn,
+    msg,
+    monthTotalEl,
+    tbody,
+    amountEl,
+    categoryEl,
+    dateEl,
+    noteEl
+  });
+
+  const { data: authData, error: authError } = await supabaseClient.auth.getUser();
+  console.log("getUser:", authData, authError);
+
+  const user = authData?.user;
 
   if (!user) {
-    // not logged in
     window.location.href = "index.html";
     return;
   }
@@ -18,36 +42,90 @@ document.addEventListener("DOMContentLoaded", async () => {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
   });
-const addBtn = document.getElementById("addBtn");
 
-addBtn.addEventListener("click", async () => {
+  // default date = today
+  dateEl.value = new Date().toISOString().slice(0, 10);
 
-  console.log("Add button clicked");
+  async function loadExpenses() {
+    const { data, error } = await supabaseClient
+      .from("expenses")
+      .select("*")
+      .order("expense_date", { ascending: false });
 
-  const amount = document.getElementById("amount").value;
-  const category = document.getElementById("category").value;
-  const expense_date = document.getElementById("expense_date").value;
-  const note = document.getElementById("note").value;
+    console.log("loadExpenses:", data, error);
 
-  const { data, error } = await supabaseClient
-    .from("expenses")
-    .insert([
-      {
-        amount: Number(amount),
-        category: category,
-        expense_date: expense_date,
-        note: note
+    if (error) {
+      msg.textContent = "❌ " + error.message;
+      return;
+    }
+
+    tbody.innerHTML = "";
+
+    let monthTotal = 0;
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    data.forEach((row) => {
+      if ((row.expense_date || "").startsWith(currentMonth)) {
+        monthTotal += Number(row.amount || 0);
       }
-    ]);
 
-  console.log("Insert result:", data);
-  console.log("Insert error:", error);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.expense_date ?? ""}</td>
+        <td>${row.category ?? ""}</td>
+        <td>${row.note ?? ""}</td>
+        <td>${Number(row.amount ?? 0).toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
 
-  if (error) {
-    alert(error.message);
-  } else {
-    alert("Expense added successfully");
+    monthTotalEl.textContent = monthTotal.toFixed(2);
   }
 
-});  
+  addBtn.addEventListener("click", async () => {
+    console.log("Add button clicked");
+
+    const amount = amountEl.value;
+    const category = categoryEl.value.trim();
+    const expense_date = dateEl.value;
+    const note = noteEl.value.trim();
+
+    console.log("form values:", { amount, category, expense_date, note });
+
+    if (!amount || !category || !expense_date) {
+      msg.textContent = "❌ Please fill amount, category and date.";
+      return;
+    }
+
+    const { data, error } = await supabaseClient
+      .from("expenses")
+      .insert([
+        {
+          amount: Number(amount),
+          category,
+          expense_date,
+          note: note || null
+        }
+      ])
+      .select();
+
+    console.log("insert result:", data, error);
+
+    if (error) {
+      msg.textContent = "❌ " + error.message;
+      alert(error.message);
+      return;
+    }
+
+    msg.textContent = "✅ Expense added successfully";
+
+    amountEl.value = "";
+    categoryEl.value = "";
+    noteEl.value = "";
+    dateEl.value = new Date().toISOString().slice(0, 10);
+
+    await loadExpenses();
+  });
+
+  await loadExpenses();
 });
