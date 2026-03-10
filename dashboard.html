@@ -23,23 +23,22 @@
       <div class="card">
         <h2>Add Expense</h2>
 
-        <form id="expenseForm">
-          <label>Amount</label>
-          <input type="number" id="amount" required step="0.01" min="0">
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" step="0.01" min="0" />
 
-          <label>Category</label>
-          <input type="text" id="category" required placeholder="Food, Travel, Rent...">
+    <label for="category">Category</label>
+    <input id="category" type="text" placeholder="Food, Travel, Rent..." />
 
-          <label>Date</label>
-          <input type="date" id="expenseDate" required>
+    <label for="expense_date">Date</label>
+    <input id="expense_date" type="date" />
 
-          <label>Note (optional)</label>
-          <input type="text" id="note" placeholder="Any note">
-          <button id="addBtn" type="button">Add</button>
-        
-        </form>
+    <label for="note">Note (optional)</label>
+    <input id="note" type="text" placeholder="Any note" />
 
-        <p class="msg" id="msg"></p>
+    <button id="addBtn" type="button">Add</button>
+    <p id="msg"></p>
+  </div>
+       
       </div>
 
       <div class="card">
