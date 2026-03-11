@@ -97,16 +97,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    const { data, error } = await supabaseClient
-      .from("expenses")
-      .insert([
-        {
-          amount: Number(amount),
-          category,
-          expense_date,
-          note: note || null
-        }
-      ])
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+const { data, error } = await supabaseClient
+  .from("expenses")
+  .insert([
+    {
+      user_id: user.id,
+      amount: Number(amount),
+      category: category,
+      expense_date: expense_date,
+      note: note
+    }
+  ]);
       .select();
 
     console.log("insert result:", data, error);
