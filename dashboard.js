@@ -109,7 +109,7 @@ const { data, error } = await supabaseClient
       expense_date: expense_date,
       note: note 
     }
-  ]);
+  ])
       .select();
 
     console.log("insert result:", data, error);
@@ -119,7 +119,7 @@ const { data, error } = await supabaseClient
       alert(error.message);
       return;
     }
-
+  
     msg.textContent = "✅ Expense added successfully";
 
     amountEl.value = "";
