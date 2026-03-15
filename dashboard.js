@@ -107,7 +107,7 @@ const { data, error } = await supabaseClient
       amount: Number(amount),
       category: category,
       expense_date: expense_date,
-      note: note
+      note: note 
     }
   ]);
       .select();
