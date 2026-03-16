@@ -12,3 +12,18 @@ button { margin-top: 12px; padding: 10px 14px; border: 0; border-radius: 8px; cu
 table { width:100%; border-collapse: collapse; }
 th, td { padding: 10px; border-bottom: 1px solid #eee; text-align:left; font-size: 14px; }
 @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+.month-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.month-table th {
+  background: #f4f4f4;
+  padding: 8px;
+}
+
+.month-table td {
+  padding: 8px;
+  font-weight: bold;
+}
