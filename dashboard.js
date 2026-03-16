@@ -50,7 +50,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { data, error } = await supabaseClient
       .from("expenses")
       .select("*")
-      .order("expense_date", { ascending: false });
+      .order("expense_date", { ascending: false }); 
+    
+     const monthTotals = new Array(12).fill(0);
+data.forEach((row) => {
+  const date = new Date(row.expense_date);
+  const monthIndex = date.getMonth(); // 0 = Jan
+
+  monthTotals[monthIndex] += Number(row.amount || 0);
+});
+  
+    const totalsRow = document.getElementById("monthTotalsRow");
+totalsRow.innerHTML = "";
+
+monthTotals.forEach((total) => {
+  const td = document.createElement("td");
+  td.textContent = total.toFixed(2);
+  totalsRow.appendChild(td);
+});  
 
     console.log("loadExpenses:", data, error);
 
